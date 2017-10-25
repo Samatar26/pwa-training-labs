@@ -19,7 +19,7 @@ const gulp = require('gulp');
 const browserSync = require('browser-sync');
 const del = require('del');
 const runSequence = require('run-sequence');
-
+const wbBuild = require('workbox-build')
 // Clean output directory
 gulp.task('clean', () => del(['.tmp', 'build/*', '!build/.git'], {dot: true}));
 

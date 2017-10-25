@@ -16,9 +16,19 @@ limitations under the License.
 /*jshint esversion: 6*/
 
 var app = (function() {
-
   function getImageName(country) {
-    // TODO 2.1 - create a promise
+    country = country.toLowerCase()
+    let promiseOfImageName = new Promise((resolve, reject) => {
+      setTimeout(function() {
+        if (country === 'spain' || country === 'chile' || country === 'peru') {
+          resolve(country + '.png')
+        } else {
+          reject(Error("Didn't receive a valid country name!"))
+        }
+      }, 1000)
+    })
+    console.log(promiseOfImageName)
+    return promiseOfImageName
   }
 
   function isSpain(country) {
@@ -27,6 +37,12 @@ var app = (function() {
 
   function flagChain(country) {
     // TODO 2.2 - use the promise
+    return getImageName(country)
+      .catch(fallbackName)
+      .then(fetchFlag)
+      .then(processFlag)
+      .then(appendFlag)
+      .catch(logError)
   }
 
   function spainTest(country) {
@@ -35,64 +51,72 @@ var app = (function() {
 
   function allFlags(promiseList) {
     // TODO
+    return Promise.all(promiseList)
   }
 
   // TODO 4.1 - Promise.all
+  let promises = [
+    getImageName('Spain'),
+    getImageName('Chile'),
+    getImageName('Peru'),
+  ]
 
+  allFlags(promises).then(function(result) {
+    console.log(result)
+  })
   // TODO 4.2 - Promise.race
 
   /* Helper functions */
 
   function logSuccess(result) {
-    console.log('Success!:\n' + result);
+    console.log('Success!:\n' + result)
   }
 
   function logError(err) {
-    console.log('Oh no!:\n' + err);
+    console.log('Oh no!:\n' + err)
   }
 
   function returnTrue() {
-    return true;
+    return true
   }
 
   function returnFalse() {
-    return false;
+    return false
   }
 
   function fetchFlag(imageName) {
-    return fetch('flags/' + imageName); // fetch returns a promise
+    return fetch('flags/' + imageName) // fetch returns a promise
   }
 
   function processFlag(flagResponse) {
     if (!flagResponse.ok) {
-      throw Error('Bad response for flag request!'); // This will implicitly reject
+      throw Error('Bad response for flag request!') // This will implicitly reject
     }
-    return flagResponse.blob(); // blob() returns a promise
+    return flagResponse.blob() // blob() returns a promise
   }
 
   function appendFlag(flagBlob) {
-    var flagImage = document.createElement('img');
-    var flagDataURL = URL.createObjectURL(flagBlob);
-    flagImage.src = flagDataURL;
-    document.body.appendChild(flagImage);
+    var flagImage = document.createElement('img')
+    var flagDataURL = URL.createObjectURL(flagBlob)
+    flagImage.src = flagDataURL
+    document.body.appendChild(flagImage)
   }
 
   function fallbackName() {
-    return 'chile.png';
+    return 'chile.png'
   }
 
   // Don't worry if you don't understand this, it's not part of Promises.
   // We are using the JavaScript Module Pattern to enable unit testing of
   // our functions.
   return {
-    getImageName: (getImageName),
-    flagChain: (flagChain),
-    isSpain: (isSpain),
-    spainTest: (spainTest),
-    fetchFlag: (fetchFlag),
-    processFlag: (processFlag),
-    appendFlag: (appendFlag),
-    allFlags: (allFlags)
-  };
-
-})();
+    getImageName: getImageName,
+    flagChain: flagChain,
+    isSpain: isSpain,
+    spainTest: spainTest,
+    fetchFlag: fetchFlag,
+    processFlag: processFlag,
+    appendFlag: appendFlag,
+    allFlags: allFlags,
+  }
+})()

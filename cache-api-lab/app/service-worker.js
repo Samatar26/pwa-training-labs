@@ -14,13 +14,76 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-(function() {
-  'use strict';
+;(function() {
+  'use strict'
 
   // TODO 2 - cache the application shell
+  const filesToCache = [
+    '.',
+    'style/main.css',
+    'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
+    'images/still_life-1600_large_2x.jpg',
+    'images/still_life-800_large_1x.jpg',
+    'images/still_life_small.jpg',
+    'images/still_life_medium.jpg',
+    'index.html',
+    'pages/offline.html',
+    'pages/404.html',
+  ]
 
+  const staticCacheName = 'pages-cache-v2'
+
+  self.addEventListener('install', event => {
+    console.log('Attempting to install service worker and cache static assets')
+    event.waitUntil(
+      caches.open(staticCacheName).then(function(cache) {
+        return cache.addAll(filesToCache)
+      })
+    )
+  })
   // TODO 3 - intercept network requests
-
+  self.addEventListener('fetch', event => {
+    console.log('Fetch event for ', event.request.url)
+    event.respondWith(
+      caches
+        .match(event.request)
+        .then(response => {
+          if (response) {
+            console.log('Found ', event.request.url)
+            return response
+          }
+          console.log('Network request for ', event.request.url)
+          return fetch(event.request).then(response => {
+            if(response.status===404) {
+              return caches.match('pages/404.html')
+            }
+            return caches.open(staticCacheName).then(function(cache) {
+              if (event.request.url.indexOf('test') < 0) {
+                cache.put(event.request.url, response.clone())
+              }
+              return response
+            })
+          })
+        })
+        .catch(error => caches.match('pages/offline.html'))
+    )
+  })
   // TODO 7 - delete unused caches
+  self.addEventListener('active', (event) => {
+    console.log('Activating new service worker..')
 
-})();
+    let cacheWhiteList = [staticCacheName]
+
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        return Promies.all(
+          cacheNames.map((cacheName) => {
+            if(cacheWhiteList.indexOf(cacheName) === -1) {
+              return caches.delete(cacheName)
+            }
+          })
+        )
+      })
+    )
+  })
+})()

@@ -49,6 +49,15 @@ figure {
   margin: 1em 0 1em 0;
 }
 
+img {
+  max-width: 100%;
+}
+
+img#sfo {
+  transition: width 0.5s;
+  max-width: 50vw;
+}
+
 h1 {
   color: #bb021e;
   font-family: 'Roboto condensed', sans-serif;

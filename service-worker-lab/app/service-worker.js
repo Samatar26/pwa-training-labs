@@ -13,13 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-(function() {
-  'use strict';
+;(function() {
+  'use strict'
 
   // TODO - 3.1: Add install and activate event listeners
-
-  // TODO - 3.3: Add a comment to change the service worker
-
-  // TODO - 4: Add fetch listener
-
-})();
+  self.addEventListener('install', event =>
+    console.log('Service worker is installing...')
+  )
+  self.addEventListener('activate', event =>
+    console.log('Service worker activating...')
+  )
+  // I'm a new service worker
+  self.addEventListener('fetch', event =>
+    console.log('fetching', event.request.url)
+  )
+  self.skipWaiting()
+})()

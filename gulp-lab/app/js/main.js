@@ -13,17 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-(function() {
-  'use strict';
+;(function() {
+  'use strict'
 
-  var future = 2001;
+  var future = 2001
 
   function hal() {
-    console.log('I\'m sorry Dave, I\'m afraid I can\'t do that.');
+    console.log("I'm sorry Dave, I'm afraid I can't do that.")
   }
 
   if (future) {
-    hal();
+    hal()
+    console.log('iujk')
+    return
   }
-
-})();
+})()
